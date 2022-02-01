@@ -1,19 +1,23 @@
 * {
-    box-sizing: border-box;
-}
-
-body {
-    height: 70vh; /* DESPUES, usar js para ajustar al resultado de restar el alto de la calculadora final y el vh*/
-    width: 100vw;
+    font-family: monospace;
+    font-size: x-large;
 }
 
 /* Posicion de los botones y pantalla. */
 
+body {
+    margin: 0;
+}
+
+#base {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+}
+
 main {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 300px;
 }
 
 #calculadora {
@@ -34,6 +38,11 @@ main {
 #buttonIgual {
     grid-column: 4 / 5;
     grid-row: 4 / 6;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
 }
 
 /* Estilo en si */
@@ -57,4 +66,13 @@ body {
     margin: 0;
     padding: 3px 5px;
     text-align: right;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 1em 0;
+    background: #0c0a29;
+    border-top: .12rem solid #000;
+    color: #c9c9c9  ;
 }

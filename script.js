@@ -30,6 +30,9 @@ function eliminarUltimoCaracter() {view.textContent = view.textContent.substring
 
 B_Numeros.forEach((num, i) => {
     num.addEventListener("click", () => {
+        if(view.textContent === "0"){
+            eliminarUltimoCaracter()
+        }
         view.textContent += i;
     })
 })
@@ -55,9 +58,16 @@ B_Operation.forEach(operation => operation.addEventListener("click", () => {
 
 //Ahora los signos para borrar en sus dos formas:
 
-B_AC.addEventListener("click", () => view.textContent = "");
+B_AC.addEventListener("click", () => view.textContent = "0");
 
-B_Borrar.addEventListener("click", eliminarUltimoCaracter);
+B_Borrar.addEventListener("click", () => {
+    if(view.textContent[0] !== "0" && view.textContent.length == 1){
+        eliminarUltimoCaracter();
+        view.textContent = "0"
+    } else {
+        eliminarUltimoCaracter();
+    }
+}); //si es el ultimo digito un numero y lo borro se cambia a 0
 
 //Y por ultimo la suma, donde se resuelven las operaciones:
 
@@ -70,9 +80,6 @@ B_Igual.addEventListener("click", () => {
     };
 
 })
-
-
-
 
 function separar(str){
     let oper = [];
@@ -94,16 +101,53 @@ function separar(str){
     let num = [];
     let numeroTotal = "";
 
-    let numConSpace = str.replace("+" || "-" || "/" || "x", "");
-    console.log(numConSpace)
     caracteresSeparados.forEach((caracter, i) => {
-        if(!Number(caracter) || caracter === 0){
-            if(i != 0){
-                numeroTotal = caracter;
-            }
-        } else {
+        if(caracteresSeparados.length -1 === i){                    //Filtro para hacer el ultimo push a "num" si es que estamos en el ultimo digito
             numeroTotal += caracter;
+            num.push(Number(numeroTotal));
+        } else if(!isNaN(caracter) || caracter === "."){            //Si es un numero o un punto aumenta este valor al grupo que se este armando.
+                numeroTotal += caracter;
+        } else {                                                    //Si es un operador, se hace push a "num" del ultimo grupo de numeros guardados.
+            num.push(Number(numeroTotal));
+            numeroTotal = "";
         }
-        num.push(caracteresSeparados)
     })
+
+    console.log(num)
+
+    /*Ahora que ya tengo dos tipos de array, uno solo de grupos de numeros y el otro de las operaciones que se hacen entre estos numeros,
+    voy a resolver estas en orden de importancia (x), usando el valor index de la operacion en el array y resolviendo el grupo
+    del mismo valor index con el grupo de ese mismo valor index sumado 1, que seria al que le sigue practicamente. 
+    Cuando esto se me ocurrio se me voló la cabeza.*/
+
+    let operacionesPorImportancia = [["x","/"] , ["+",""], ["-",""]];
+
+    operacionesPorImportancia.forEach(operacionImportante => {
+        oper.forEach((operacion, iOper) => {
+            if(operacionImportante[0] ||  operacionImportante[1] === operacion){
+                resolver(operacion, iOper);
+            }
+        })
+    });
+
+    view.textContent = num[0]
+
+    //  |-----|  //
+
+    function resolver(operacion, iOper){     //No encuentro una forma de usar una variable como operador, por ende tuve que usar condicionales
+        oper.splice(iOper, 1);               //Comparando "operacion" con la operacion que quiero realizar. Si alguien se le ocurre algo mas
+        if(operacion === "/"){               //inteligente por favor comentar.
+            num[iOper + 1] /= num[iOper]
+            num.splice(iOper, 1)
+        } else if (operacion === "x"){
+            num[iOper + 1] *= num[iOper]
+            num.splice(iOper, 1)
+        } else if (operacion === "+"){
+            num[iOper + 1] += num[iOper]
+            num.splice(iOper, 1)
+        } else if (operacion === "-"){
+            num[iOper] -= num[iOper + 1]
+            num.splice(iOper +1, 1)
+        }
+    }
 }
